@@ -32,7 +32,12 @@ chmod -R 755 install_OlivOS.sh
 
 在成功安装conda之后，我们需要重新运行一次脚本：
 
-键入 `conda activate OlivOS` 以激活OlivOS环境，然后键入 `./install_OlivOS.sh` 重新运行脚本以继续安装。
+```shell
+conda activate OlivOS
+./install_OlivOS.sh
+```
+
+键入 `conda activate OlivOS` 用于激活Conda中刚刚创建的OlivOS环境，键入 `./install_OlivOS.sh` 用于重新运行脚本以继续安装。
 
 ### 启动
 
