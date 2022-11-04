@@ -29,7 +29,7 @@ function waiting()
     done
 }
 
-# 检测本机是否为CentOS
+# 检测本机内核版
 check_sys(){
     if [[ -f /etc/redhat-release ]]; then
         release="centos"
@@ -50,24 +50,6 @@ check_sys(){
         release="unknown"
     fi
     bit=`uname -m`
-}
-
-# 如果是CentOS则返回警告
-anti_CentOS(){
-    if [[ ${release} != "centos" ]]; then
-        echo -e "${Info} 检测到当前发行版系统为 ${Green_font_prefix}[${release}]${Font_color_suffix}..."
-    else
-        echo -e "${Warrning} OlivOS官方不推荐使用${Red_font_prefix}[${release}]${Font_color_suffix}进行部署，推荐您使用Docker部署!"
-        echo -e "${Warrning} 本脚本可以运行在${Red_font_prefix}[${release}]${Font_color_suffix}上，但未经验证，可能会出现未知错误。"
-        # 继续运行请按Y
-            read -p "是否继续运行？[Y/n]:" yn
-            if [[ $yn == [Yy] ]]; then
-            echo -e "${Info} 继续运行..."
-            else
-            exit 1
-            fi
-    fi
-
 }
 
 # 如果不是x86_64则返回警告
@@ -202,14 +184,14 @@ check_python()
 {
     local python_version=`python3 -V 2>&1 | awk '{print $2}'`
     # 如果版本大于3.7，小于3.8
-    if [ "$python_version" \> "3.7.0" ] && [ "$python_version" \< "3.8.99" ]; then
+    if [ "$python_version" \> "3.7.0" ] && [ "$python_version" \< "3.10.99" ]; then
         echo -e "${Info} 本地python版本为$python_version，符合要求！"
         sleep 2
     else
     # 如果版本小于3.7，大于3.9
-        if [ "$python_version" \< "3.6.99" ] || [ "$python_version" \> "3.9.0" ]; then
+        if [ "$python_version" \< "3.6.99" ] || [ "$python_version" \> "3.11.0" ]; then
             echo -e "${Error} 本地python版本为$python_version，不符合要求！"
-            echo -e "${Tip} 请安装python3.7或python3.8！"
+            echo -e "${Tip} 请安装python3.7~3.10！"
             exit 1
         else
             # 尝试安装python
@@ -224,7 +206,7 @@ check_python()
                 yum install -y python3.8
             fi
             echo -e "${Info} python3.8安装完成！"
-            sleep 2
+            sleep 2 
             
         fi
 
@@ -304,12 +286,10 @@ install_dependence()
     if [ $ret_code -eq 200 ]; then
         echo -e "${Info} 网络连通性良好，使用默认镜像下载"
         pip3 install --upgrade pip
-        pip install pyyaml~=6.0 --ignore-installed
         pip3 install --upgrade pip -r requirements.txt
     else
         echo -e "${Info} 网络连通性不佳，使用腾讯镜像下载"
         pip3 install --upgrade pip -i https://mirrors.cloud.tencent.com/pypi/simple/
-        pip install pyyaml~=6.0 --ignore-installed -i https://mirrors.cloud.tencent.com/pypi/simple
         pip3 install --upgrade pip -r requirements.txt -i https://mirrors.cloud.tencent.com/pypi/simple
     fi
     echo -e "${Tip} 依赖安装或修复完成！"
