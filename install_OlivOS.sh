@@ -2,7 +2,7 @@
 
 # =================================================
 #	Description: OlivOS-OneKey
-#	Version: 1.0.0
+#	Version: 1.0.2
 #	Author: RHWong
 # =================================================
 
@@ -13,6 +13,7 @@ Warrning="${Red_font_prefix}[警告]${Font_color_suffix}"
 Tip="${Green_font_prefix}[提示]${Font_color_suffix}"
 ret_code=`curl -o /dev/null --connect-timeout 3 -s -w %{http_code} https://google.com`
 conda_path=$HOME/miniconda3
+Ver=v1.0.2
 
 function waiting()
 {
@@ -296,9 +297,45 @@ install_dependence()
     sleep 2
 }
 
+# 下载默认插件
+download_default_plugin()
+{
+    echo -e "${Info} 开始下载默认插件..."
+    sleep 2
+    cd $HOME/OlivOS/plugins/app
+        echo -e "${Info} 下载OlivaDiceCore..."
+        sleep 1
+        wget -P $HOME/OlivOS/plugins/app/ https://ghproxy.com/https://github.com/OlivOS-Team/OlivaDiceCore/releases/latest/download/OlivaDiceCore.opk -N
+        echo -e "${Info} 下载OlivaDiceJoe..."
+        sleep 1
+        wget $HOME/OlivOS/plugins/app/ https://ghproxy.com/https://github.com/OlivOS-Team/OlivaDiceJoy/releases/latest/download/OlivaDiceJoy.opk -N
+        echo -e "${Info} 下载OlivaDiceLogger..."
+        sleep 1
+        wget $HOME/OlivOS/plugins/app/ https://ghproxy.com/https://github.com/OlivOS-Team/OlivaDiceLogger/releases/latest/download/OlivaDiceLogger.opk -N
+        echo -e "${Info} 下载OlivaDiceMaster..."
+        sleep 1
+        wget $HOME/OlivOS/plugins/app/ https://ghproxy.com/https://github.com/OlivOS-Team/OlivaDiceMaster/releases/latest/download/OlivaDiceMaster.opk -N
+        echo -e "${Info} 下载ChanceCustom..."
+        sleep 1
+        wget $HOME/OlivOS/plugins/app/ https://ghproxy.com/https://github.com/OlivOS-Team/ChanceCustom/releases/latest/download/ChanceCustom.opk -N
+        echo -e "${Info} 下载OlivaDiceOdyssey..."
+        sleep 1
+        wget $HOME/OlivOS/plugins/app/ https://ghproxy.com/https://github.com/OlivOS-Team/OlivaDiceOdyssey/releases/latest/download/OlivaDiceOdyssey.opk -N
+
+    echo -e "${Tip} 默认插件下载完成！"
+}
 StartOlivOS()
 {
 # 启动OlivOS
+    echo -e "·····························"
+    echo -e "···____···____···____··_··__·"
+    echo -e "··/·__·\·/·__·\·/·__·\|·|/·/·"
+    echo -e "·|·|··|·|·|··|·|·|··|·|·'·/··"
+    echo -e "·|·|··|·|·|··|·|·|··|·|· <···"
+    echo -e "·|·|__|·|·|__|·|·|__|·|·.·\··"
+    echo -e "··\____/·\____/·\____/|_|\_\·"
+    echo -e "·····························"
+    echo -e "${Red_font_prefix}---OlivOS-OneKey ${Ver} by OlivOS-Team---${Font_color_suffix}"
     echo -e "${Tip} 开始安装OlivOS..." 
     check_sys
     anti_bit
@@ -312,17 +349,20 @@ install_local(){
     check_pip
     install_OlivOS
     chmod -R 766 $HOME/OlivOS
-    cd $HOME/OlivOS
     install_dependence
+    download_default_plugin
     echo -e "${Tip} OlivOS安装完成！"
     sleep 2
     echo -e "${Tip} 开始尝试运行，如有问题请提交issue"
+    cd $HOME/OlivOS
     python3 main.py
     # 打印安装位置
     echo -e "${Tip} OlivOS安装位置：$HOME/OlivOS"
     # 打印OlivOS启动指令
     echo -e "启动指令如下："
     echo -e "${Green_font_prefix}cd $HOME/OlivOS && python3 main.py${Font_color_suffix}"
+    echo -e "如果需要后台运行，请使用:"
+    echo -e "${Green_font_prefix}screen -dmS OlivOS cd $HOME/OlivOS && python3 main.py${Font_color_suffix}"
 }
 
 # conda安装
@@ -344,17 +384,20 @@ install_conda(){
     sleep 2
     install_OlivOS
     chmod -R 766 $HOME/OlivOS
-    cd $HOME/OlivOS
     install_dependence
+    download_default_plugin
     echo -e "${Tip} OlivOS安装完成！"
     sleep 2
     echo -e "${Tip} 开始尝试运行，如有问题请提交issue"
+    cd $HOME/OlivOS
     python3 main.py
     # 打印安装位置
     echo -e "${Tip} OlivOS安装位置：$HOME/OlivOS"
 #    打印OlivOS启动指令
     echo -e "启动指令如下："
-    echo -e "${Green_font_prefix}cd $HOME/OlivOS && conda activate OlivOS && python3 main.py${Font_color_suffix}"
+    echo -e "${Green_font_prefix}conda activate OlivOS && cd $HOME/OlivOS && python3 main.py${Font_color_suffix}"
+    echo -e "如果需要后台运行，请使用:"
+    echo -e "${Green_font_prefix}screen -dmS OlivOS conda activate OlivOS && cd $HOME/OlivOS && python3 main.py${Font_color_suffix}"
 }
 
 
@@ -377,9 +420,4 @@ select_install(){
         ;;
     esac
 }
-
-
 StartOlivOS
-
-
-
