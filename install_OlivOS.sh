@@ -2,7 +2,7 @@
 
 # =================================================
 #	Description: OlivOS-OneKey
-#	Version: 1.0.2
+#	Version: 1.0.3
 #	Author: RHWong
 # =================================================
 
@@ -13,7 +13,7 @@ Warrning="${Red_font_prefix}[警告]${Font_color_suffix}"
 Tip="${Green_font_prefix}[提示]${Font_color_suffix}"
 ret_code=`curl -o /dev/null --connect-timeout 3 -s -w %{http_code} https://google.com`
 conda_path=$HOME/miniconda3
-Ver=v1.0.2
+Ver=v1.0.3
 
 function waiting()
 {
@@ -97,7 +97,8 @@ check_conda(){
             echo -e "${Info} 检测到已存在conda目录，正在删除..."
             rm -rf $conda_path
         fi
-        echo -e "${Warrning} 注意，在安装中可能会有提示需要你点击enter键或输入yes，请按照屏幕上的提示输入！"
+            echo -e "${Warrning} 注意，安装中如果提示需要你点击enter键或输入yes，请按照屏幕上的提示输入！"
+            echo -e "${Warrning} 安装conda完毕后，请重新连接终端并切换到amiya环境后重新运行此脚本。"
         sleep 2
         # 按下enter继续
         read -p "按下enter键继续..."
@@ -126,7 +127,7 @@ check_conda(){
                 echo -e "${Error} 本脚本不支持${Red_font_prefix}[${bit}]${Font_color_suffix}系统！"
                 exit 1
             fi
-        bash miniconda.sh
+        bash miniconda.sh -b
         echo -e "${Info} conda安装结束！"
         else
     # 使用yum安装conda
@@ -151,7 +152,7 @@ check_conda(){
                 echo -e "${Error} 本脚本不支持${Red_font_prefix}[${bit}]${Font_color_suffix}系统！"
                 exit 1
             fi
-        bash miniconda.sh
+        bash miniconda.sh -b
         echo -e "${Info} conda安装结束！"
         sleep 2
         fi
@@ -302,25 +303,25 @@ download_default_plugin()
 {
     echo -e "${Info} 开始下载默认插件..."
     sleep 2
-    cd $HOME/OlivOS/plugins/app
+    cd $HOME/OlivOS/plugin/app
         echo -e "${Info} 下载OlivaDiceCore..."
         sleep 1
-        wget -P $HOME/OlivOS/plugins/app/ https://ghproxy.com/https://github.com/OlivOS-Team/OlivaDiceCore/releases/latest/download/OlivaDiceCore.opk -N
+        wget -P $HOME/OlivOS/plugin/app/ https://ghproxy.com/https://github.com/OlivOS-Team/OlivaDiceCore/releases/latest/download/OlivaDiceCore.opk -N
         echo -e "${Info} 下载OlivaDiceJoe..."
         sleep 1
-        wget $HOME/OlivOS/plugins/app/ https://ghproxy.com/https://github.com/OlivOS-Team/OlivaDiceJoy/releases/latest/download/OlivaDiceJoy.opk -N
+        wget $HOME/OlivOS/plugin/app/ https://ghproxy.com/https://github.com/OlivOS-Team/OlivaDiceJoy/releases/latest/download/OlivaDiceJoy.opk -N
         echo -e "${Info} 下载OlivaDiceLogger..."
         sleep 1
-        wget $HOME/OlivOS/plugins/app/ https://ghproxy.com/https://github.com/OlivOS-Team/OlivaDiceLogger/releases/latest/download/OlivaDiceLogger.opk -N
+        wget $HOME/OlivOS/plugin/app/ https://ghproxy.com/https://github.com/OlivOS-Team/OlivaDiceLogger/releases/latest/download/OlivaDiceLogger.opk -N
         echo -e "${Info} 下载OlivaDiceMaster..."
         sleep 1
-        wget $HOME/OlivOS/plugins/app/ https://ghproxy.com/https://github.com/OlivOS-Team/OlivaDiceMaster/releases/latest/download/OlivaDiceMaster.opk -N
+        wget $HOME/OlivOS/plugin/app/ https://ghproxy.com/https://github.com/OlivOS-Team/OlivaDiceMaster/releases/latest/download/OlivaDiceMaster.opk -N
         echo -e "${Info} 下载ChanceCustom..."
         sleep 1
-        wget $HOME/OlivOS/plugins/app/ https://ghproxy.com/https://github.com/OlivOS-Team/ChanceCustom/releases/latest/download/ChanceCustom.opk -N
+        wget $HOME/OlivOS/plugin/app/ https://ghproxy.com/https://github.com/OlivOS-Team/ChanceCustom/releases/latest/download/ChanceCustom.opk -N
         echo -e "${Info} 下载OlivaDiceOdyssey..."
         sleep 1
-        wget $HOME/OlivOS/plugins/app/ https://ghproxy.com/https://github.com/OlivOS-Team/OlivaDiceOdyssey/releases/latest/download/OlivaDiceOdyssey.opk -N
+        wget $HOME/OlivOS/plugin/app/ https://ghproxy.com/https://github.com/OlivOS-Team/OlivaDiceOdyssey/releases/latest/download/OlivaDiceOdyssey.opk -N
 
     echo -e "${Tip} 默认插件下载完成！"
 }
@@ -375,9 +376,9 @@ install_conda(){
     else
         echo -e "${Info} OlivOS环境不存在，开始部署..."
         conda init bash
-        conda create -n OlivOS python=3.8
+        echo y | conda create -n OlivOS python=3.8
         conda activate OlivOS
-        echo -e "${Info} OlivOS环境部署完成！请重新连接到终端，使用${Green_font_prefix}conda activate OlivOS${Font_color_suffix}指令来激活OlivOS环境"
+        echo -e "${Info} OlivOS环境部署完成！请${Red_font_prefix}重新连接${Font_color_suffix}到终端，使用${Green_font_prefix}conda activate OlivOS${Font_color_suffix}指令来激活OlivOS环境，然后${Red_font_prefix}重新运行${Font_color_suffix}此脚本。"
         exit 1
     fi
     echo -e "${Tip} 正在安装OlivOS..."
