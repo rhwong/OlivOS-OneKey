@@ -22,11 +22,7 @@ chmod -R 755 install_OlivOS.sh
 ```
 #### 【注意事项】
 
-1.在Conda安装时需要键入一些确认指令，当屏幕上提示按 `Enter` 时请按下，当提示是否确认时，请输入 `yes` 。许可部分可以按 `Q` 跳过阅读。
-
-请不要自行修改安装步骤中的安装位置，直接按下 `Enter` 安装到默认位置即可。
-
-2.由于conda在加入环境变量后，脚本会退出运行。此时必须重新连接到终端以生效，此时请务必断开ssh，重新连接终端。
+由于conda在加入环境变量后，脚本会退出运行。此时必须重新连接到终端以生效，此时请务必断开ssh，重新连接终端。
 
 重新连接后提示符前面出现 `(base)` ，例如 `(base) root@ecs:~# ` 这样的显示就是conda成功安装了。
 
@@ -48,7 +44,16 @@ conda activate OlivOS
 cd $HOME/OlivOS
 python3 main.py
 ```
+确认调试无误后可以用screen后台运行，没有screen请自行安装，Ubuntu使用 `sudo apt-get -y install screen` CentOS使用`yum -y install screen`。
 
+```shell
+screen -dmS OlivOS conda activate OlivOS && cd $HOME/OlivOS && python3 main.py
+```
+使用以下命令可以恢复screen窗口
+
+```shell
+screen -r OlivOS
+```
 ### 更新和修复
 
 重复安装步骤，按照原本的安装方式选择即可。检测到已存在OlivOS目录时，脚本会自动拉取代码并更新依赖。
