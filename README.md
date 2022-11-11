@@ -14,9 +14,9 @@
 <img src="https://img.shields.io/badge/Ubuntu-x86__64-red?style=flat-square&logo=ubuntu"> 
 <img src="https://img.shields.io/badge/Ubuntu-aarch64-red?style=flat-square&logo=ubuntu"> 
 <img src="https://img.shields.io/badge/CentOS-x86__64-green?style=flat-square&logo=centos">
-<img src="https://img.shields.io/badge/CentOS-aarch64-green?style=flat-square&logo=centos">
+<!--img src="https://img.shields.io/badge/CentOS-aarch64-green?style=flat-square&logo=centos"-->
 <img src="https://img.shields.io/badge/Debian-x86__64-purple?style=flat-square&logo=debian">
-<img src="https://img.shields.io/badge/Debian-aarch64-purple?style=flat-square&logo=debian">
+<!--img src="https://img.shields.io/badge/Debian-aarch64-purple?style=flat-square&logo=debian"-->
 
 其他发行版及类型系统如果出现问题请提交issue！
 
