@@ -232,20 +232,21 @@ Ver=v1.1.1
     # 检测本地python版本
     check_python()
     {
+        local py_v_1=`python -V 2>&1|awk '{print $2}'|awk -F '.' '{print $1}'`
+        local py_v_2=`python -V 2>&1|awk '{print $2}'|awk -F '.' '{print $2}'`
         local python_version=`python3 -V 2>&1 | awk '{print $2}'`
         # 如果版本大于3.8，小于3.10
-        if [ "$python_version" \> "3.8.0" ] && [ "$python_version" \< "3.10.99" ]; then
-            echo -e "${Info} 本地python版本为$python_version，符合要求！"
+        if [[ ${py_v_1} -eq 3 && ${py_v_2} -ge 8 && ${py_v_2} -lt 10 ]]; then
+            echo -e "${Info} 检测到本地python版本为${Green_font_prefix}[${python_version}]${Font_color_suffix}，符合要求！"
             sleep 2
-        else
-        # 如果版本小于3.7，大于3.9
-            if [ "$python_version" \< "3.7.99" ]; then
-                echo -e "${Error} 本地python版本为$python_version，版本过低不符合要求！"
-                echo -e "${Tip} 请手动安装python3.8及以上，或重新运行脚本选择conda安装"
-                exit 1
-        # 如果版本大于3.9
-            elif [ "$python_version" \> "3.10.99" ]; then
-                echo -e "${Warrning} 本地python版本为$python_version，大于3.10可能会出现依赖版本不支持的情况！"
+        # 如果版本小于3.8
+        elif [[ ${py_v_1} -eq 3 && ${py_v_2} -lt 8 ]]; then
+            echo -e "${Error} 检测到本地python版本为${Red_font_prefix}[${python_version}]${Font_color_suffix}，小于3.8，不符合要求！"
+            exit 1  
+        # 如果版本大于3.10
+        elif [[ ${py_v_1} -eq 3 && ${py_v_2} -gt 10 ]]; then
+            echo -e "${Error} 检测到本地python版本为${Red_font_prefix}[${python_version}]${Font_color_suffix}"
+            echo -e "${Tip} OlivOS目前仅支持python3.8-3.10，如果你的python版本大于3.10，可能会出现未知错误！"
                 # 询问是否继续，输入y继续，输入n退出
                 read -p "是否继续？[y/n]:" yn
                 if [[ $yn == [Yy] ]]; then
@@ -254,12 +255,16 @@ Ver=v1.1.1
                 echo -e "${Info} 退出运行！"
                 exit 1
                 fi
-            else
+        # 如果安装的是python2
+        elif [[ ${py_v_1} -eq 2 ]]; then
+            echo -e "${Error} 检测到本地python版本为${Red_font_prefix}[${python_version}]${Font_color_suffix}，你的战术是现代的,构思却相当古老。你究竟是什么人？！"
+            exit 1
+        else
             # 没有python
                 echo -e "${Error} 本地没有安装python！"
-                echo -e "${Tip} 请先手动安装python3.7或python3.8，或重新运行脚本使用conda安装"
+                echo -e "${Tip} 请先手动安装python3.8~3.10，或重新运行脚本使用conda安装"
                 exit 1
-            fi
+            
         fi
     }
 
