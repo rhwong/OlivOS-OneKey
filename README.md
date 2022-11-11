@@ -4,9 +4,21 @@
 
 用于部署 [OlivOS](https://github.com/OlivOS-Team/OlivOS) 异步机器人框架的Linux快速部署脚本<br>
 
+<img src="https://img.shields.io/github/issues/rhwong/OlivOS-OneKey"> <img src="https://img.shields.io/github/forks/rhwong/OlivOS-OneKey"> 
+<img src="https://img.shields.io/github/stars/rhwong/OlivOS-OneKey"> <img src="https://img.shields.io/github/license/rhwong/OlivOS-OneKey">
+
 注意：本项目仅用于快速部署 [OlivOS](https://github.com/OlivOS-Team/OlivOS) 本体，后续对接何种前端(如[Go-cqhtp](https://github.com/Mrs4s/go-cqhttp/))取决您自己的选择，这些部分并不包含在部署范围内，请参考[官方论坛](https://forum.olivos.run/)。
 
-注意：本脚本仅通过 Ubuntu x86_64 验证，其他发行版及类型系统如果出现问题请提交issue！
+注意：本脚本仅在以下发行版经过测试
+
+<img src="https://img.shields.io/badge/Ubuntu-x86__64-red?style=flat-square&logo=ubuntu"> 
+<img src="https://img.shields.io/badge/Ubuntu-aarch64-red?style=flat-square&logo=ubuntu"> 
+<img src="https://img.shields.io/badge/CentOS-x86__64-green?style=flat-square&logo=centos">
+<img src="https://img.shields.io/badge/CentOS-aarch64-green?style=flat-square&logo=centos">
+<img src="https://img.shields.io/badge/Debian-x86__64-purple?style=flat-square&logo=debian">
+<img src="https://img.shields.io/badge/Debian-aarch64-purple?style=flat-square&logo=debian">
+
+其他发行版及类型系统如果出现问题请提交issue！
 
 </div>
 <!-- projectInfo end -->
@@ -20,6 +32,11 @@ wget -N https://ghproxy.com/https://github.com/rhwong/OlivOS-OneKey/raw/main/ins
 chmod -R 755 install_OlivOS.sh
 ./install_OlivOS.sh
 ```
+
+也可以这样启动安装脚本 `./install_OlivOS.sh -s` 
+
+使用 `-s` 参数可以跳过所有确认步骤使用conda安装方式安装。
+
 #### 【注意事项】
 
 由于conda在加入环境变量后，脚本会退出运行。此时必须重新连接到终端以生效，此时请务必断开ssh，重新连接终端。
