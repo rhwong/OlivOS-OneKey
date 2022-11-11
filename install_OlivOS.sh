@@ -23,61 +23,61 @@ Ver=v1.1.0
             
 
 
-function waiting()
-{
-    i=0
-    while [ $i -le 100 ]
-    do
-    for j in '\\' '|' '/' '-'
-    do
-    printf "\t%c%c%c%c%c ${Info} 少女祈祷中... %c%c%c%c%c\r" \
-    "$j" "$j" "$j" "$j" "$j" "$j" "$j" "$j" "$j" "$j"
-    sleep 0.1
-    done
-    let i=i+4
-    done
-}
+    function waiting()
+    {
+        i=0
+        while [ $i -le 100 ]
+        do
+        for j in '\\' '|' '/' '-'
+        do
+        printf "\t%c%c%c%c%c ${Info} 少女祈祷中... %c%c%c%c%c\r" \
+        "$j" "$j" "$j" "$j" "$j" "$j" "$j" "$j" "$j" "$j"
+        sleep 0.1
+        done
+        let i=i+4
+        done
+    }
 
-# 检测本机内核版
-check_sys(){
-    if [[ -f /etc/redhat-release ]]; then
-        release="Centos"
-    elif cat /etc/issue | grep -q -E -i "Debian"; then
-        release="Debian"
-    elif cat /etc/issue | grep -q -E -i "Ubuntu"; then
-        release="Ubuntu"
-    elif cat /etc/issue | grep -q -E -i "Centos|red hat|redhat"; then
-        release="Centos"
-    elif cat /proc/version | grep -q -E -i "Debian"; then
-        release="Debian"
-    elif cat /proc/version | grep -q -E -i "Ubuntu"; then
-        release="Ubuntu"
-    elif cat /proc/version | grep -q -E -i "Centos|red hat|redhat"; then
-        release="Centos"
-    # 如果是未知系统版本则输出unknown
-    else
-        release="unknown"
-    fi
-    bit=`uname -m`
-}
+    # 检测本机内核版
+    check_sys(){
+        if [[ -f /etc/redhat-release ]]; then
+            release="Centos"
+        elif cat /etc/issue | grep -q -E -i "Debian"; then
+            release="Debian"
+        elif cat /etc/issue | grep -q -E -i "Ubuntu"; then
+            release="Ubuntu"
+        elif cat /etc/issue | grep -q -E -i "Centos|red hat|redhat"; then
+            release="Centos"
+        elif cat /proc/version | grep -q -E -i "Debian"; then
+            release="Debian"
+        elif cat /proc/version | grep -q -E -i "Ubuntu"; then
+            release="Ubuntu"
+        elif cat /proc/version | grep -q -E -i "Centos|red hat|redhat"; then
+            release="Centos"
+        # 如果是未知系统版本则输出unknown
+        else
+            release="unknown"
+        fi
+        bit=`uname -m`
+    }
 
-# 如果不是x86_64则返回警告
-anti_bit(){
-    if [[ ${bit} == "x86_64" ]]; then
-        echo -e "${Info} 系统类型为 ${Green_font_prefix}[${bit}]${Font_color_suffix}，开始安装..."
-    else
-        echo -e "${Warrning} OlivOS官方不推荐使用${Red_font_prefix}[${bit}]${Font_color_suffix}进行部署!"
-        echo -e "${Warrning} 本脚本可以运行在${Red_font_prefix}[${bit}]${Font_color_suffix}上，但未经验证，可能会出现未知错误。"
-        # 继续运行请按Y
-            read -p "是否继续运行？[Y/n]:" yn
-            if [[ $yn == [Yy] ]]; then
-            echo -e "${Info} 继续运行..."
-            else
-            exit 1
-            fi
-    fi
+    # 如果不是x86_64则返回警告
+    anti_bit(){
+        if [[ ${bit} == "x86_64" ]]; then
+            print_release_bit
+        else
+            echo -e "${Warrning} OlivOS官方不推荐使用${Red_font_prefix}[${bit}]${Font_color_suffix}进行部署!"
+            echo -e "${Warrning} 本脚本可以运行在${Red_font_prefix}[${bit}]${Font_color_suffix}上，但未经验证，可能会出现未知错误。"
+            # 继续运行请按Y
+                read -p "是否继续运行？[Y/n]:" yn
+                if [[ $yn == [Yy] ]]; then
+                echo -e "${Info} 继续运行..."
+                else
+                exit 1
+                fi
+        fi
 
-}
+    }
 
     # 判断${release}使用不同方式安装wget和git
     install_wget_git(){
@@ -98,15 +98,7 @@ anti_bit(){
     # 打印release和bit
         # 如果是Centos则返回警告
     print_release_bit(){
-        if [[ ${release} != "Centos" ]]; then
             echo -e "${Info} 当前系统为 ${Green_font_prefix}[${release}]${Font_color_suffix} ${Green_font_prefix}[${bit}]${Font_color_suffix}"
-        else
-            echo -e "${Info} 当前系统为 ${Green_font_prefix}[${release}]${Font_color_suffix} ${Green_font_prefix}[${bit}]${Font_color_suffix}"
-            echo -e "${Warrning} OlivOS官方不推荐使用${Red_font_prefix}[${release}]${Font_color_suffix}进行部署，推荐您使用Docker部署!"
-            echo -e "${Warrning} 本脚本可以运行在${Red_font_prefix}[${release}]${Font_color_suffix}上，但未经验证，可能会出现未知错误。"
-            sleep 5
-        fi
-
     }
 
     # 静默安装conda
