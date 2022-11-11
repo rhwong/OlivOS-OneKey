@@ -2,7 +2,7 @@
 
 # =================================================
 #	Description: OlivOS-OneKey
-#	Version: 1.1.1
+#	Version: 1.1.2
 #	Author: RHWong
 # =================================================
 
@@ -13,7 +13,7 @@ Warrning="${Red_font_prefix}[警告]${Font_color_suffix}"
 Tip="${Green_font_prefix}[提示]${Font_color_suffix}"
 ret_code=`curl -o /dev/null --connect-timeout 3 -s -w %{http_code} https://google.com`
 conda_path=$HOME/miniconda3
-Ver=v1.1.1
+Ver=v1.1.2
 
     if [ $ret_code -eq 200 ] || [ $ret_code -eq 301 ]; then
         miniconda_url=https://repo.anaconda.com/miniconda
