@@ -414,7 +414,7 @@ Ver=v1.1.2
         echo -e "${Tip} OlivOS安装完成！"
         sleep 2
         echo -e "${Tip} 开始尝试运行，如有问题请提交issue"
-        python3 main.py
+        cd $HOME/OlivOS && python3 main.py
         # 打印安装位置
         echo -e "${Tip} OlivOS安装位置：$HOME/OlivOS"
         # 打印OlivOS启动指令
@@ -438,8 +438,7 @@ Ver=v1.1.2
         echo -e "${Tip} OlivOS安装完成！"
         sleep 2
         echo -e "${Tip} 开始尝试运行，如有问题请提交issue"
-        cd $HOME/OlivOS
-        python3 main.py
+        cd $HOME/OlivOS && python3 main.py
         # 打印安装位置
         echo -e "${Tip} OlivOS安装位置：$HOME/OlivOS"
     #    打印OlivOS启动指令
@@ -466,7 +465,7 @@ Ver=v1.1.2
         echo -e "${Tip} OlivOS安装完成！"
         sleep 2
         echo -e "${Tip} 开始尝试运行，如有问题请提交issue"
-        python3 main.py
+        cd $HOME/OlivOS && python3 main.py
         # 打印安装位置
         echo -e "${Tip} OlivOS安装位置：$HOME/OlivOS"
     #    打印OlivOS启动指令
