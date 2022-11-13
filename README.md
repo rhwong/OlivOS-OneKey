@@ -29,7 +29,7 @@
 ### 安装
 
 ```shell
-wget -N https://ghproxy.com/https://github.com/rhwong/OlivOS-OneKey/raw/main/install_OlivOS.sh
+wget -N https://gitee.com/Rhwong/OlivOS-OneKey/raw/main/install_OlivOS.sh
 chmod -R 755 install_OlivOS.sh
 ./install_OlivOS.sh
 ```
