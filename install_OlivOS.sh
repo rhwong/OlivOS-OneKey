@@ -2,7 +2,7 @@
 
 # =================================================
 #	Description: OlivOS-OneKey
-#	Version: 1.2.0
+#	Version: 1.2.1
 #	Author: RHWong
 # =================================================
 
@@ -14,7 +14,7 @@ Tip="${Green_font_prefix}[提示]${Font_color_suffix}"
 ret_code=`curl -o /dev/null --connect-timeout 3 -s -w %{http_code} https://google.com`
 conda_path=$HOME/miniconda3
 OlivOS_path=$HOME/OlivOS
-Ver=v1.2.0
+Ver=v1.2.1
 
     if [ $ret_code -eq 200 ] || [ $ret_code -eq 301 ]; then
         miniconda_url=https://repo.anaconda.com/miniconda
@@ -138,7 +138,7 @@ Ver=v1.2.0
 
     # 检测conda安装是否成功
     check_conda_install(){
-        if [ -x "$($conda_path/bin/conda -V)" ]; then
+        if [ -n "$($conda_path/bin/conda -V)" ]; then
             echo -e "${Info} conda安装成功！"
             sleep 2
         else
@@ -166,7 +166,7 @@ Ver=v1.2.0
     {
         local py_v_1=`python -V 2>&1|awk '{print $2}'|awk -F '.' '{print $1}'`
         local py_v_2=`python -V 2>&1|awk '{print $2}'|awk -F '.' '{print $2}'`
-        local python_version=`python3 -V 2>&1 | awk '{print $2}'`
+        local python_version=`python -V 2>&1 | awk '{print $2}'`
         # 如果版本大于3.8，小于3.10
         if [[ ${py_v_1} -eq 3 && ${py_v_2} -ge 8 && ${py_v_2} -lt 10 ]]; then
             echo -e "${Info} 检测到本地python版本为${Green_font_prefix}[${python_version}]${Font_color_suffix}，符合要求！"
@@ -342,7 +342,7 @@ Ver=v1.2.0
             # 提示是否删除conda
             echo -e "${Tip} 是否删除miniconda？"
             # 继续运行请按Y
-            read -p "继续运行请按Y：" confirm
+            read -p "是否继续运行？[Y/n]" confirm
             if [ $confirm == "Y" ] || [ $confirm == "y" ]; then
                 echo -e "${Info} 开始删除miniconda..."
                 sleep 2
@@ -442,7 +442,7 @@ Ver=v1.2.0
         echo -e "启动指令如下："
         echo -e "${Green_font_prefix}cd $OlivOS_path && python3 main.py${Font_color_suffix}"
         echo -e "如果需要后台运行，请使用:"
-        echo -e "${Green_font_prefix}screen -dmS OlivOS cd $OlivOS_path && python3 main.py${Font_color_suffix}"
+        echo -e "${Green_font_prefix}cd $OlivOS_path && screen -dmS OlivOS python3 main.py${Font_color_suffix}"
     }
 
     # conda安装
@@ -466,7 +466,7 @@ Ver=v1.2.0
         echo -e "启动指令如下："
         echo -e "${Green_font_prefix}cd $OlivOS_path && $conda_path/envs/OlivOS/bin/python3 main.py${Font_color_suffix}"
         echo -e "如果需要后台运行，请使用:"
-        echo -e "${Green_font_prefix}screen -dmS OlivOS cd $OlivOS_path && $conda_path/envs/OlivOS/bin/python3 main.py${Font_color_suffix}"
+        echo -e "${Green_font_prefix}cd $OlivOS_path && screen -dmS OlivOS $conda_path/envs/OlivOS/bin/python3 main.py${Font_color_suffix}"
     }
 
 
@@ -493,7 +493,7 @@ Ver=v1.2.0
         echo -e "启动指令如下："
         echo -e "${Green_font_prefix}cd $OlivOS_path && $conda_path/envs/OlivOS/bin/python3 main.py${Font_color_suffix}"
         echo -e "如果需要后台运行，请使用:"
-        echo -e "${Green_font_prefix}screen -dmS OlivOS cd $OlivOS_path && $conda_path/envs/OlivOS/bin/python3 main.py${Font_color_suffix}"
+        echo -e "${Green_font_prefix}cd $OlivOS_path && screen -dmS OlivOS $conda_path/envs/OlivOS/bin/python3 main.py${Font_color_suffix}"
     }
 
     # 提示选择在本地安装还是在conda安装
