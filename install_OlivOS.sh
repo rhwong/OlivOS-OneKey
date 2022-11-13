@@ -416,7 +416,6 @@ Ver=v1.2.1
         echo -e "··\____/·\____/·\____/|_|\_\·"
         echo -e "·····························"
         echo -e "${Red_font_prefix}---OlivOS-OneKey ${Ver} by OlivOS-Team---${Font_color_suffix}"
-        echo -e "${Tip} 开始安装OlivOS..." 
         check_sys
         anti_bit
         select_install
