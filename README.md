@@ -1,4 +1,5 @@
 <div align="center">
+    <img alt="OOOK" src="https://olivos.onekey.ren/img/logo.png"/>
 
 # OlivOS-OneKey
 
