@@ -2,7 +2,7 @@
 
 # =================================================
 #	Description: OlivOS-OneKey
-#	Version: 1.1.2
+#	Version: 1.2.0
 #	Author: RHWong
 # =================================================
 
@@ -13,7 +13,8 @@ Warrning="${Red_font_prefix}[警告]${Font_color_suffix}"
 Tip="${Green_font_prefix}[提示]${Font_color_suffix}"
 ret_code=`curl -o /dev/null --connect-timeout 3 -s -w %{http_code} https://google.com`
 conda_path=$HOME/miniconda3
-Ver=v1.1.2
+OlivOS_path=$HOME/OlivOS
+Ver=v1.2.0
 
     if [ $ret_code -eq 200 ] || [ $ret_code -eq 301 ]; then
         miniconda_url=https://repo.anaconda.com/miniconda
@@ -101,70 +102,13 @@ Ver=v1.1.2
             echo -e "${Info} 当前系统为 ${Green_font_prefix}[${release}]${Font_color_suffix} ${Green_font_prefix}[${bit}]${Font_color_suffix}"
     }
 
-    # 静默安装conda
-    silent_install_conda(){
-        # conda命令可用，跳过安装
-        if [ -x "$(command -v conda)" ]; then
-            echo -e "${Info} 检测到已存在conda，跳过安装"
-            sleep 2
-        else
-            echo -e "${Info} 检测到未安装conda，开始安装"
-            # 删除conda目录
-            if [ -d "$conda_path" ]; then
-                echo -e "${Info} 检测到已存在conda目录，正在删除..."
-                rm -rf $conda_path
-            fi
-            echo -e "${Warrning} 注意，安装中如果提示需要你点击enter键或输入yes，请按照屏幕上的提示输入！"
-            echo -e "${Warrning} 安装conda完毕后，请重新连接终端并切换到OlivOS环境后重新运行此脚本。"
-            sleep 4
-        # conda安装
-            # 下载安装包
-                if [[ ${bit} == "x86_64" ]]; then
-                    wget ${miniconda_url}/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
-                elif [[ ${bit} == "aarch64" ]]; then
-                    wget ${miniconda_url}/Miniconda3-latest-Linux-aarch64.sh -O miniconda.sh
-                elif [[ ${bit} == "armv7l" ]]; then
-                    wget ${miniconda_url}/Miniconda3-latest-Linux-armv7l.sh -O miniconda.sh
-                elif [[ ${bit} == "i686" ]]; then
-                    wget ${miniconda_url}/Miniconda3-latest-Linux-x86.sh -O miniconda.sh
-                elif [[ ${bit} == "ppc64le" ]]; then
-                    wget ${miniconda_url}/Miniconda3-latest-Linux-ppc64le.sh -O miniconda.sh
-                elif [[ ${bit} == "s390x" ]]; then
-                    wget ${miniconda_url}/Miniconda3-latest-Linux-s390x.sh -O miniconda.sh
-                elif [[ ${bit} == "i386" ]]; then
-                    wget ${miniconda_url}/Miniconda3-latest-Linux-x86.sh -O miniconda.sh
-                else
-                    echo -e "${Error} 本脚本不支持${Red_font_prefix}[${bit}]${Font_color_suffix}系统！"
-                    exit 1
-                fi
-            bash miniconda.sh -b
-            echo -e "${Info} conda安装结束！"
-            sleep 2
-        add_conda_path
-        source /etc/profile
-        check_conda_install
-        fi
-    }
-
-
     # 安装conda
     check_conda(){
-        # conda命令可用，跳过安装
-        if [ -x "$(command -v conda)" ]; then
-            echo -e "${Info} 检测到已存在conda，跳过安装"
+        if [ -d "$conda_path" ]; then
+            echo -e "${Info} 检测到已存在conda目录，跳过安装，如果需要重新安装，请先删除conda目录！"
             sleep 2
         else
             echo -e "${Info} 检测到未安装conda，开始安装"
-            # 删除conda目录
-            if [ -d "$conda_path" ]; then
-                echo -e "${Info} 检测到已存在conda目录，正在删除..."
-                rm -rf $conda_path
-            fi
-            echo -e "${Warrning} 注意，安装中如果提示需要你点击enter键或输入yes，请按照屏幕上的提示输入！"
-            echo -e "${Warrning} 安装conda完毕后，请重新连接终端并切换到OlivOS环境后重新运行此脚本。"
-            sleep 2
-            # 按下enter继续
-            read -p "确认阅读上述说明后，按下enter键继续..."
         # conda安装
             # 下载安装包
                 if [[ ${bit} == "x86_64" ]]; then
@@ -182,36 +126,26 @@ Ver=v1.1.2
                 elif [[ ${bit} == "i386" ]]; then
                     wget ${miniconda_url}/Miniconda3-latest-Linux-x86.sh -O miniconda.sh
                 else
-                    echo -e "${Error} 本脚本不支持${Red_font_prefix}[${bit}]${Font_color_suffix}系统！"
+                    echo -e "${Error} miniconda不支持${Red_font_prefix}[${bit}]${Font_color_suffix}系统！"
                     exit 1
                 fi
             bash miniconda.sh -b
             echo -e "${Info} conda安装结束！"
             sleep 2
-        add_conda_path
-        source /etc/profile
         check_conda_install
         fi
     }
 
     # 检测conda安装是否成功
     check_conda_install(){
-        if [ -x "$(command -v conda)" ]; then
+        if [ -x "$($conda_path/bin/conda -V)" ]; then
             echo -e "${Info} conda安装成功！"
             sleep 2
         else
-            echo -e "${Error} conda安装失败，请手动安装conda"
+            echo -e "${Error} conda安装失败，请检查日志输出！"
             exit 1
         fi
     }
-
-    # 将conda加入环境变量
-        add_conda_path(){
-            echo -e "${Tip} 正在将conda加入环境变量..."
-            echo "export PATH=$conda_path/bin:$PATH" >> /etc/profile
-            source /etc/profile
-            echo -e "${Info} conda加入环境变量完成！"
-        }
 
     create_conda_env(){
         # 判断OlivOS环境是否已经存在
@@ -221,11 +155,9 @@ Ver=v1.1.2
         else
             echo -e "${Info} OlivOS环境不存在，开始部署..."
             sleep 2
-            conda init bash
-            echo y | conda create -n OlivOS python=3.10
-            conda activate OlivOS
-            echo -e "${Info} OlivOS环境部署完成！请${Red_font_prefix}重新连接${Font_color_suffix}到终端，使用${Green_font_prefix}conda activate OlivOS${Font_color_suffix}指令来激活OlivOS环境，然后${Red_font_prefix}重新运行${Font_color_suffix}此脚本。"
-            exit 1
+            echo y | $conda_path/bin/conda create -n OlivOS python=3.10
+            $conda_path/bin/conda activate OlivOS
+            echo -e "${Info} OlivOS环境部署完成！"
         fi
     }
 
@@ -342,7 +274,7 @@ Ver=v1.1.2
     {
         echo -e "${Info} 开始安装或修复依赖..."
         sleep 2
-        cd $HOME/OlivOS
+        cd $OlivOS_path
         if [ $ret_code -eq 200 ]; then
             echo -e "${Info} 网络连通性良好，使用默认镜像下载"
             pip3 install --upgrade pip
@@ -356,33 +288,122 @@ Ver=v1.1.2
         sleep 2
     }
 
+    # 为conda环境安装或修复依赖
+    install_conda_dependence()
+    {
+        echo -e "${Info} 开始安装或修复依赖..."
+        sleep 2
+        cd $OlivOS_path
+        if [ $ret_code -eq 200 ]; then
+            echo -e "${Info} 网络连通性良好，使用默认镜像下载"
+            $conda_path/envs/OlivOS/bin/pip3 install --upgrade pip
+            $conda_path/envs/OlivOS/bin/pip3 install --upgrade pip -r requirements.txt
+        else
+            echo -e "${Info} 网络连通性不佳，使用腾讯镜像下载"
+            $conda_path/envs/OlivOS/bin/pip3 install --upgrade pip -i https://mirrors.cloud.tencent.com/pypi/simple/
+            $conda_path/envs/OlivOS/bin/pip3 install --upgrade pip -r requirements.txt -i https://mirrors.cloud.tencent.com/pypi/simple
+        fi
+        echo -e "${Tip} 依赖安装或修复完成！"
+        sleep 2
+    }
+
+
     # 下载默认插件
     download_default_plugin()
     {
         echo -e "${Info} 开始下载默认插件..."
         sleep 2
-        cd $HOME/OlivOS/plugin/app
+        cd $OlivOS_path/plugin/app
             echo -e "${Info} 下载OlivaDiceCore..."
             sleep 1
-            wget -P $HOME/OlivOS/plugin/app/ https://ghproxy.com/https://github.com/OlivOS-Team/OlivaDiceCore/releases/latest/download/OlivaDiceCore.opk -N
+            wget -P $OlivOS_path/plugin/app/ https://ghproxy.com/https://github.com/OlivOS-Team/OlivaDiceCore/releases/latest/download/OlivaDiceCore.opk -N
             echo -e "${Info} 下载OlivaDiceJoe..."
             sleep 1
-            wget $HOME/OlivOS/plugin/app/ https://ghproxy.com/https://github.com/OlivOS-Team/OlivaDiceJoy/releases/latest/download/OlivaDiceJoy.opk -N
+            wget $OlivOS_path/plugin/app/ https://ghproxy.com/https://github.com/OlivOS-Team/OlivaDiceJoy/releases/latest/download/OlivaDiceJoy.opk -N
             echo -e "${Info} 下载OlivaDiceLogger..."
             sleep 1
-            wget $HOME/OlivOS/plugin/app/ https://ghproxy.com/https://github.com/OlivOS-Team/OlivaDiceLogger/releases/latest/download/OlivaDiceLogger.opk -N
+            wget $OlivOS_path/plugin/app/ https://ghproxy.com/https://github.com/OlivOS-Team/OlivaDiceLogger/releases/latest/download/OlivaDiceLogger.opk -N
             echo -e "${Info} 下载OlivaDiceMaster..."
             sleep 1
-            wget $HOME/OlivOS/plugin/app/ https://ghproxy.com/https://github.com/OlivOS-Team/OlivaDiceMaster/releases/latest/download/OlivaDiceMaster.opk -N
+            wget $OlivOS_path/plugin/app/ https://ghproxy.com/https://github.com/OlivOS-Team/OlivaDiceMaster/releases/latest/download/OlivaDiceMaster.opk -N
             echo -e "${Info} 下载ChanceCustom..."
             sleep 1
-            wget $HOME/OlivOS/plugin/app/ https://ghproxy.com/https://github.com/OlivOS-Team/ChanceCustom/releases/latest/download/ChanceCustom.opk -N
+            wget $OlivOS_path/plugin/app/ https://ghproxy.com/https://github.com/OlivOS-Team/ChanceCustom/releases/latest/download/ChanceCustom.opk -N
             echo -e "${Info} 下载OlivaDiceOdyssey..."
             sleep 1
-            wget $HOME/OlivOS/plugin/app/ https://ghproxy.com/https://github.com/OlivOS-Team/OlivaDiceOdyssey/releases/latest/download/OlivaDiceOdyssey.opk -N
+            wget $OlivOS_path/plugin/app/ https://ghproxy.com/https://github.com/OlivOS-Team/OlivaDiceOdyssey/releases/latest/download/OlivaDiceOdyssey.opk -N
 
         echo -e "${Tip} 默认插件下载完成！"
     }
+
+    # 删除miniconda
+    remove_miniconda(){
+        if [ -d "$conda_path" ]; then
+            # 提示是否删除conda
+            echo -e "${Tip} 是否删除miniconda？"
+            # 继续运行请按Y
+            read -p "继续运行请按Y：" confirm
+            if [ $confirm == "Y" ] || [ $confirm == "y" ]; then
+                echo -e "${Info} 开始删除miniconda..."
+                sleep 2
+                rm -rf $conda_path
+                echo -e "${Tip} miniconda删除成功！"
+                sleep 2
+                # 检测是否删除成功
+                if [ -d "$conda_path" ]; then
+                    echo -e "${Error} 删除失败！"
+                    exit 1
+                else
+                    echo -e "${Tip} 删除成功！"
+                fi
+            else
+                echo -e "${Tip} 取消删除miniconda！"
+                sleep 2
+            fi
+        # 未找到目录
+        else
+            echo -e "${Info} 未检测到conda目录"
+        fi
+    }
+
+    # 删除OlivOS
+    remove_OlivOS(){
+        # 警告
+        echo -e "${Warrning} 卸载OlivOS会${Red_font_prefix}完全删除${Font_color_suffix}所有数据，且${Red_font_prefix}无法恢复${Font_color_suffix}！"
+        echo -e "${Warrning} 请确保你已经备份好需要保留的数据！"
+        # 继续运行请按Y
+            read -p "是否继续运行？[Y/n]:" yn
+            if [[ $yn == [Yy] ]]; then
+            echo -e "${Info} 继续运行..."
+            else
+            exit 1
+            fi
+        if [ -d "$OlivOS_path" ]; then
+            echo -e "${Info} 检测到已存在OlivOS目录，正在删除..."
+            rm -rf $OlivOS_path
+        # 未找到目录
+        else
+            echo -e "${Info} 未检测到OlivOS目录"
+        fi
+        # 检测是否删除成功
+        if [ -d "$OlivOS_path" ]; then
+            echo -e "${Error} 删除失败！"
+            exit 1
+        else
+            echo -e "${Tip} 删除成功！"
+        fi
+    }
+
+    # 卸载
+    uninstall(){
+        echo -e "${Info} 开始卸载..."
+        sleep 2
+        remove_miniconda
+        remove_OlivOS
+        echo -e "${Tip} 卸载完成！"
+        sleep 2
+    }
+
     StartOlivOS()
     {
     # 启动OlivOS
@@ -407,21 +428,21 @@ Ver=v1.1.2
         check_python
         check_pip
         install_OlivOS
-        chmod -R 766 $HOME/OlivOS
-        cd $HOME/OlivOS
+        chmod -R 766 $OlivOS_path
+        cd $OlivOS_path
         install_dependence
         download_default_plugin
         echo -e "${Tip} OlivOS安装完成！"
         sleep 2
         echo -e "${Tip} 开始尝试运行，如有问题请提交issue"
-        cd $HOME/OlivOS && python3 main.py
+        cd $OlivOS_path && python3 main.py
         # 打印安装位置
-        echo -e "${Tip} OlivOS安装位置：$HOME/OlivOS"
+        echo -e "${Tip} OlivOS安装位置：$OlivOS_path"
         # 打印OlivOS启动指令
         echo -e "启动指令如下："
-        echo -e "${Green_font_prefix}cd $HOME/OlivOS && python3 main.py${Font_color_suffix}"
+        echo -e "${Green_font_prefix}cd $OlivOS_path && python3 main.py${Font_color_suffix}"
         echo -e "如果需要后台运行，请使用:"
-        echo -e "${Green_font_prefix}screen -dmS OlivOS cd $HOME/OlivOS && python3 main.py${Font_color_suffix}"
+        echo -e "${Green_font_prefix}screen -dmS OlivOS cd $OlivOS_path && python3 main.py${Font_color_suffix}"
     }
 
     # conda安装
@@ -432,20 +453,20 @@ Ver=v1.1.2
         echo -e "${Tip} 正在安装OlivOS..."
         sleep 2
         install_OlivOS
-        chmod -R 766 $HOME/OlivOS
-        install_dependence
+        chmod -R 766 $OlivOS_path
+        install_conda_dependence
         download_default_plugin
         echo -e "${Tip} OlivOS安装完成！"
         sleep 2
         echo -e "${Tip} 开始尝试运行，如有问题请提交issue"
-        cd $HOME/OlivOS && python3 main.py
+        cd $OlivOS_path && $conda_path/envs/OlivOS/bin/python3 main.py
         # 打印安装位置
-        echo -e "${Tip} OlivOS安装位置：$HOME/OlivOS"
+        echo -e "${Tip} OlivOS安装位置：$OlivOS_path"
     #    打印OlivOS启动指令
         echo -e "启动指令如下："
-        echo -e "${Green_font_prefix}conda activate OlivOS && cd $HOME/OlivOS && python3 main.py${Font_color_suffix}"
+        echo -e "${Green_font_prefix}cd $OlivOS_path && $conda_path/envs/OlivOS/bin/python3 main.py${Font_color_suffix}"
         echo -e "如果需要后台运行，请使用:"
-        echo -e "${Green_font_prefix}screen -dmS OlivOS conda activate OlivOS && cd $HOME/OlivOS && python3 main.py${Font_color_suffix}"
+        echo -e "${Green_font_prefix}screen -dmS OlivOS cd $OlivOS_path && $conda_path/envs/OlivOS/bin/python3 main.py${Font_color_suffix}"
     }
 
 
@@ -454,23 +475,25 @@ Ver=v1.1.2
         check_sys
         print_release_bit
         install_wget_git
-        silent_install_conda
+        check_conda
         create_conda_env
         echo -e "${Tip} 正在安装OlivOS..."
         sleep 2
         install_OlivOS
-        chmod -R 766 $HOME/OlivOS
-        cd $HOME/OlivOS
-        install_dependence
+        chmod -R 766 $OlivOS_path
+        install_conda_dependence
+        download_default_plugin
         echo -e "${Tip} OlivOS安装完成！"
         sleep 2
         echo -e "${Tip} 开始尝试运行，如有问题请提交issue"
-        cd $HOME/OlivOS && python3 main.py
+        cd $OlivOS_path && $conda_path/envs/OlivOS/bin/python3 main.py
         # 打印安装位置
-        echo -e "${Tip} OlivOS安装位置：$HOME/OlivOS"
+        echo -e "${Tip} OlivOS安装位置：$OlivOS_path"
     #    打印OlivOS启动指令
         echo -e "启动指令如下："
-        echo -e "${Green_font_prefix}cd $HOME/OlivOS && conda activate OlivOS && python3 main.py${Font_color_suffix}"
+        echo -e "${Green_font_prefix}cd $OlivOS_path && $conda_path/envs/OlivOS/bin/python3 main.py${Font_color_suffix}"
+        echo -e "如果需要后台运行，请使用:"
+        echo -e "${Green_font_prefix}screen -dmS OlivOS cd $OlivOS_path && $conda_path/envs/OlivOS/bin/python3 main.py${Font_color_suffix}"
     }
 
     # 提示选择在本地安装还是在conda安装
@@ -478,6 +501,8 @@ Ver=v1.1.2
         echo -e "${Info} 请选择安装方式"
         echo -e "1. conda虚拟环境安装(推荐)"
         echo -e "2. 本地安装"
+        echo -e "3. conda安装(清洁模式)"
+        echo -e "4. 卸载"
         read -p "请输入数字:" num
         case "$num" in
             1)
@@ -485,6 +510,13 @@ Ver=v1.1.2
             ;;
             2)
             install_local
+            ;;
+            3)
+            uninstall
+            install_conda
+            ;;
+            4)
+            uninstall
             ;;
             *)
             echo -e "${Error} 请输入正确的数字"
