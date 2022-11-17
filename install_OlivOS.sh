@@ -2,7 +2,7 @@
 
 # =================================================
 #	Description: OlivOS-OneKey
-#	Version: 1.2.1
+#	Version: 1.2.2
 #	Author: RHWong
 # =================================================
 
@@ -14,7 +14,7 @@ Tip="${Green_font_prefix}[提示]${Font_color_suffix}"
 ret_code=`curl -o /dev/null --connect-timeout 3 -s -w %{http_code} https://google.com`
 conda_path=$HOME/miniconda3
 OlivOS_path=$HOME/OlivOS
-Ver=v1.2.1
+Ver=v1.2.2
 
     if [ $ret_code -eq 200 ] || [ $ret_code -eq 301 ]; then
         miniconda_url=https://repo.anaconda.com/miniconda
@@ -39,7 +39,7 @@ Ver=v1.2.1
         done
     }
 
-    # 检测本机内核版
+    # 检测本机内核发行版
     check_sys(){
         if [[ -f /etc/redhat-release ]]; then
             release="Centos"
@@ -269,6 +269,7 @@ Ver=v1.2.1
     fi
     }
 
+
     # 安装或修复依赖
     install_dependence()
     {
@@ -278,15 +279,30 @@ Ver=v1.2.1
         if [ $ret_code -eq 200 ]; then
             echo -e "${Info} 网络连通性良好，使用默认镜像下载"
             pip3 install --upgrade pip
-            pip3 install --upgrade pip -r requirements.txt
         else
             echo -e "${Info} 网络连通性不佳，使用腾讯镜像下载"
             pip3 install --upgrade pip -i https://mirrors.cloud.tencent.com/pypi/simple/
-            pip3 install --upgrade pip -r requirements.txt -i https://mirrors.cloud.tencent.com/pypi/simple
         fi
-        echo -e "${Tip} 依赖安装或修复完成！"
+        # 搜索目录下的所有requirements.txt文件并逐个安装
+        for file in $(find . -name "requirements.txt")
+        do
+            if [ $ret_code -eq 200 ]; then
+                echo -e "${Info} 正在安装${file}中的依赖..."
+                sleep 1
+                pip3 install --upgrade pip -r $file
+                echo -e "${Tip} ${file}中的依赖安装完成！"
+                sleep 1
+            else
+                echo -e "${Info} 正在安装${file}中的依赖..."
+                sleep 1
+                pip3 install --upgrade pip -r $file -i https://mirrors.cloud.tencent.com/pypi/simple
+                echo -e "${Tip} ${file}中的依赖安装完成！"
+                sleep 1
+            fi
+        done
+        echo -e "${Tip} 所有依赖安装或修复完成！"
         sleep 2
-    }
+        }
 
     # 为conda环境安装或修复依赖
     install_conda_dependence()
@@ -297,12 +313,27 @@ Ver=v1.2.1
         if [ $ret_code -eq 200 ]; then
             echo -e "${Info} 网络连通性良好，使用默认镜像下载"
             $conda_path/envs/OlivOS/bin/pip3 install --upgrade pip
-            $conda_path/envs/OlivOS/bin/pip3 install --upgrade pip -r requirements.txt
         else
             echo -e "${Info} 网络连通性不佳，使用腾讯镜像下载"
             $conda_path/envs/OlivOS/bin/pip3 install --upgrade pip -i https://mirrors.cloud.tencent.com/pypi/simple/
-            $conda_path/envs/OlivOS/bin/pip3 install --upgrade pip -r requirements.txt -i https://mirrors.cloud.tencent.com/pypi/simple
         fi
+         # 搜索目录下的所有requirements.txt文件并逐个安装
+        for file in $(find . -name "requirements.txt")
+        do
+            if [ $ret_code -eq 200 ]; then
+                echo -e "${Info} 正在安装${file}中的依赖..."
+                sleep 1
+                $conda_path/envs/OlivOS/bin/pip3 install --upgrade pip -r $file
+                echo -e "${Tip} ${file}中的依赖安装完成！"
+                sleep 1
+            else
+                echo -e "${Info} 正在安装${file}中的依赖..."
+                sleep 1
+                $conda_path/envs/OlivOS/bin/pip3 install --upgrade pip -r $file -i https://mirrors.cloud.tencent.com/pypi/simple
+                echo -e "${Tip} ${file}中的依赖安装完成！"
+                sleep 1
+            fi
+        done
         echo -e "${Tip} 依赖安装或修复完成！"
         sleep 2
     }
