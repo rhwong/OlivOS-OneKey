@@ -13,7 +13,12 @@ Warrning="${Red_font_prefix}[警告]${Font_color_suffix}"
 Tip="${Green_font_prefix}[提示]${Font_color_suffix}"
 ret_code=`curl -o /dev/null --connect-timeout 3 -s -w %{http_code} https://google.com`
 conda_path=$HOME/miniconda3
-OlivOS_path=$HOME/OlivOS
+project_path=$HOME/OlivOS
+env_name=OlivOS
+project_name=OlivOS
+py_ver=3.10
+min_py_ver=7
+max_py_ver=10
 Ver=v1.2.2
 
     if [ $ret_code -eq 200 ] || [ $ret_code -eq 301 ]; then
@@ -67,7 +72,7 @@ Ver=v1.2.2
         if [[ ${bit} == "x86_64" ]]; then
             print_release_bit
         else
-            echo -e "${Warrning} OlivOS官方不推荐使用${Red_font_prefix}[${bit}]${Font_color_suffix}进行部署!"
+            echo -e "${Warrning} $project_name官方不推荐使用${Red_font_prefix}[${bit}]${Font_color_suffix}进行部署!"
             echo -e "${Warrning} 本脚本可以运行在${Red_font_prefix}[${bit}]${Font_color_suffix}上，但未经验证，可能会出现未知错误。"
             # 继续运行请按Y
                 read -p "是否继续运行？[Y/n]:" yn
@@ -148,16 +153,16 @@ Ver=v1.2.2
     }
 
     create_conda_env(){
-        # 判断OlivOS环境是否已经存在
-        if [ -d "$conda_path/envs/OlivOS" ]; then
-            echo -e "${Info} OlivOS环境已存在，跳过部署！"
+        # 判断项目环境是否已经存在
+        if [ -d "$conda_path/envs/$env_name" ]; then
+            echo -e "${Info} $env_name环境已存在，跳过部署！"
             sleep 2
         else
-            echo -e "${Info} OlivOS环境不存在，开始部署..."
+            echo -e "${Info} $env_name环境不存在，开始部署..."
             sleep 2
-            echo y | $conda_path/bin/conda create -n OlivOS python=3.10
-            $conda_path/bin/conda activate OlivOS
-            echo -e "${Info} OlivOS环境部署完成！"
+            echo y | $conda_path/bin/conda create -n $env_name python=$py_ver
+            $conda_path/bin/conda activate $env_name
+            echo -e "${Info} $env_name环境部署完成！"
         fi
     }
 
@@ -168,17 +173,17 @@ Ver=v1.2.2
         local py_v_2=`python -V 2>&1|awk '{print $2}'|awk -F '.' '{print $2}'`
         local python_version=`python -V 2>&1 | awk '{print $2}'`
         # 如果版本大于3.8，小于3.10
-        if [[ ${py_v_1} -eq 3 && ${py_v_2} -ge 8 && ${py_v_2} -lt 10 ]]; then
+        if [[ ${py_v_1} -eq 3 && ${py_v_2} -ge $min_py_ver && ${py_v_2} -lt $max_py_ver ]]; then
             echo -e "${Info} 检测到本地python版本为${Green_font_prefix}[${python_version}]${Font_color_suffix}，符合要求！"
             sleep 2
         # 如果版本小于3.8
-        elif [[ ${py_v_1} -eq 3 && ${py_v_2} -lt 8 ]]; then
-            echo -e "${Error} 检测到本地python版本为${Red_font_prefix}[${python_version}]${Font_color_suffix}，小于3.8，不符合要求！"
+        elif [[ ${py_v_1} -eq 3 && ${py_v_2} -lt $min_py_ver ]]; then
+            echo -e "${Error} 检测到本地python版本为${Red_font_prefix}[${python_version}]${Font_color_suffix}，小于3.$min_py_ver，不符合要求！"
             exit 1  
         # 如果版本大于3.10
-        elif [[ ${py_v_1} -eq 3 && ${py_v_2} -gt 10 ]]; then
+        elif [[ ${py_v_1} -eq 3 && ${py_v_2} -gt $max_py_ver ]]; then
             echo -e "${Error} 检测到本地python版本为${Red_font_prefix}[${python_version}]${Font_color_suffix}"
-            echo -e "${Tip} OlivOS目前仅支持python3.8-3.10，如果你的python版本大于3.10，可能会出现未知错误！"
+            echo -e "${Tip} $project_name目前仅支持python3.$min_py_ver-3.$max_py_ver，如果你的python版本大于3.$max_py_ver，可能会出现未知错误！"
                 # 询问是否继续，输入y继续，输入n退出
                 read -p "是否继续？[y/n]:" yn
                 if [[ $yn == [Yy] ]]; then
@@ -194,7 +199,7 @@ Ver=v1.2.2
         else
             # 没有python
                 echo -e "${Error} 本地没有安装python！"
-                echo -e "${Tip} 请先手动安装python3.8~3.10，或重新运行脚本使用conda安装"
+                echo -e "${Tip} 请先手动安装python3.$min_py_ver~3.$max_py_ver，或重新运行脚本使用conda安装"
                 exit 1
             
         fi
@@ -238,29 +243,29 @@ Ver=v1.2.2
             fi
         fi
     }
-    # 安装OlivOS
-    install_OlivOS()
+    # 安装项目
+    install_project()
     {
         cd $HOME
-        # 判断OlivOS目录下main.py是否存在  
-    if [ ! -f "OlivOS/main.py" ]; then
-        echo -e "${Info} OlivOS主文件不存在，开始安装..."
+        # 判断项目目录下主要程序是否存在  
+    if [ ! -f "$project_name/main.py" ]; then
+        echo -e "${Info} $project_name主文件不存在，开始安装..."
         sleep 2
         # 如果ret_code变量值是200
         if [ $ret_code -eq 200]; then
-            echo -e "${Info} 网络连接正常，开始下载OlivOS..."
+            echo -e "${Info} 网络连接正常，开始下载$project_name..."
             git clone https://github.com/OlivOS-Team/OlivOS.git & waiting
         else 
         # 如果ret_code变量值不是200，使用镜像下载
-            echo -e "${Info} 网络连接异常，开始使用镜像下载OlivOS..."
+            echo -e "${Info} 网络连接异常，开始使用镜像下载$project_name..."
             git clone https://ghproxy.com/https://github.com/OlivOS-Team/OlivOS.git & waiting
         fi
-        echo -e "${Tip} OlivOS下载完成！"
+        echo -e "${Tip} $project_name下载完成！"
         sleep 2
     else
-        echo -e "${Info} OlivOS文件已存在，无需安装！"
+        echo -e "${Info} $project_name文件已存在，无需安装！"
         sleep 2
-        # 更新OlivOS
+        # 更新项目文件
         echo -e "${Tip} 正在更新OlivOS..."
         sleep 2
         git pull & waiting
@@ -275,7 +280,7 @@ Ver=v1.2.2
     {
         echo -e "${Info} 开始安装或修复依赖..."
         sleep 2
-        cd $OlivOS_path
+        cd $project_path
         if [ $ret_code -eq 200 ]; then
             echo -e "${Info} 网络连通性良好，使用默认镜像下载"
             pip3 install --upgrade pip
@@ -309,7 +314,7 @@ Ver=v1.2.2
     {
         echo -e "${Info} 开始安装或修复依赖..."
         sleep 2
-        cd $OlivOS_path
+        cd $project_path
         if [ $ret_code -eq 200 ]; then
             echo -e "${Info} 网络连通性良好，使用默认镜像下载"
             $conda_path/envs/OlivOS/bin/pip3 install --upgrade pip
@@ -344,25 +349,25 @@ Ver=v1.2.2
     {
         echo -e "${Info} 开始下载默认插件..."
         sleep 2
-        cd $OlivOS_path/plugin/app
+        cd $project_path/plugin/app
             echo -e "${Info} 下载OlivaDiceCore..."
             sleep 1
-            wget -P $OlivOS_path/plugin/app/ https://ghproxy.com/https://github.com/OlivOS-Team/OlivaDiceCore/releases/latest/download/OlivaDiceCore.opk -N
+            wget -P $project_path/plugin/app/ https://ghproxy.com/https://github.com/OlivOS-Team/OlivaDiceCore/releases/latest/download/OlivaDiceCore.opk -N
             echo -e "${Info} 下载OlivaDiceJoe..."
             sleep 1
-            wget $OlivOS_path/plugin/app/ https://ghproxy.com/https://github.com/OlivOS-Team/OlivaDiceJoy/releases/latest/download/OlivaDiceJoy.opk -N
+            wget $project_path/plugin/app/ https://ghproxy.com/https://github.com/OlivOS-Team/OlivaDiceJoy/releases/latest/download/OlivaDiceJoy.opk -N
             echo -e "${Info} 下载OlivaDiceLogger..."
             sleep 1
-            wget $OlivOS_path/plugin/app/ https://ghproxy.com/https://github.com/OlivOS-Team/OlivaDiceLogger/releases/latest/download/OlivaDiceLogger.opk -N
+            wget $project_path/plugin/app/ https://ghproxy.com/https://github.com/OlivOS-Team/OlivaDiceLogger/releases/latest/download/OlivaDiceLogger.opk -N
             echo -e "${Info} 下载OlivaDiceMaster..."
             sleep 1
-            wget $OlivOS_path/plugin/app/ https://ghproxy.com/https://github.com/OlivOS-Team/OlivaDiceMaster/releases/latest/download/OlivaDiceMaster.opk -N
+            wget $project_path/plugin/app/ https://ghproxy.com/https://github.com/OlivOS-Team/OlivaDiceMaster/releases/latest/download/OlivaDiceMaster.opk -N
             echo -e "${Info} 下载ChanceCustom..."
             sleep 1
-            wget $OlivOS_path/plugin/app/ https://ghproxy.com/https://github.com/OlivOS-Team/ChanceCustom/releases/latest/download/ChanceCustom.opk -N
+            wget $project_path/plugin/app/ https://ghproxy.com/https://github.com/OlivOS-Team/ChanceCustom/releases/latest/download/ChanceCustom.opk -N
             echo -e "${Info} 下载OlivaDiceOdyssey..."
             sleep 1
-            wget $OlivOS_path/plugin/app/ https://ghproxy.com/https://github.com/OlivOS-Team/OlivaDiceOdyssey/releases/latest/download/OlivaDiceOdyssey.opk -N
+            wget $project_path/plugin/app/ https://ghproxy.com/https://github.com/OlivOS-Team/OlivaDiceOdyssey/releases/latest/download/OlivaDiceOdyssey.opk -N
 
         echo -e "${Tip} 默认插件下载完成！"
     }
@@ -409,15 +414,15 @@ Ver=v1.2.2
             else
             exit 1
             fi
-        if [ -d "$OlivOS_path" ]; then
+        if [ -d "$project_path" ]; then
             echo -e "${Info} 检测到已存在OlivOS目录，正在删除..."
-            rm -rf $OlivOS_path
+            rm -rf $project_path
         # 未找到目录
         else
             echo -e "${Info} 未检测到OlivOS目录"
         fi
         # 检测是否删除成功
-        if [ -d "$OlivOS_path" ]; then
+        if [ -d "$project_path" ]; then
             echo -e "${Error} 删除失败！"
             exit 1
         else
@@ -459,21 +464,21 @@ Ver=v1.2.2
         check_python
         check_pip
         install_OlivOS
-        chmod -R 766 $OlivOS_path
-        cd $OlivOS_path
+        chmod -R 766 $project_path
+        cd $project_path
         install_dependence
         download_default_plugin
         echo -e "${Tip} OlivOS安装完成！"
         sleep 2
         echo -e "${Tip} 开始尝试运行，如有问题请提交issue"
-        cd $OlivOS_path && python3 main.py
+        cd $project_path && python3 main.py
         # 打印安装位置
-        echo -e "${Tip} OlivOS安装位置：$OlivOS_path"
+        echo -e "${Tip} OlivOS安装位置：$project_path"
         # 打印OlivOS启动指令
         echo -e "启动指令如下："
-        echo -e "${Green_font_prefix}cd $OlivOS_path && python3 main.py${Font_color_suffix}"
+        echo -e "${Green_font_prefix}cd $project_path && python3 main.py${Font_color_suffix}"
         echo -e "如果需要后台运行，请使用:"
-        echo -e "${Green_font_prefix}cd $OlivOS_path && screen -dmS OlivOS python3 main.py${Font_color_suffix}"
+        echo -e "${Green_font_prefix}cd $project_path && screen -dmS OlivOS python3 main.py${Font_color_suffix}"
     }
 
     # conda安装
@@ -484,20 +489,20 @@ Ver=v1.2.2
         echo -e "${Tip} 正在安装OlivOS..."
         sleep 2
         install_OlivOS
-        chmod -R 766 $OlivOS_path
+        chmod -R 766 $project_path
         install_conda_dependence
         download_default_plugin
         echo -e "${Tip} OlivOS安装完成！"
         sleep 2
         echo -e "${Tip} 开始尝试运行，如有问题请提交issue"
-        cd $OlivOS_path && $conda_path/envs/OlivOS/bin/python3 main.py
+        cd $project_path && $conda_path/envs/OlivOS/bin/python3 main.py
         # 打印安装位置
-        echo -e "${Tip} OlivOS安装位置：$OlivOS_path"
+        echo -e "${Tip} OlivOS安装位置：$project_path"
     #    打印OlivOS启动指令
         echo -e "启动指令如下："
-        echo -e "${Green_font_prefix}cd $OlivOS_path && $conda_path/envs/OlivOS/bin/python3 main.py${Font_color_suffix}"
+        echo -e "${Green_font_prefix}cd $project_path && $conda_path/envs/OlivOS/bin/python3 main.py${Font_color_suffix}"
         echo -e "如果需要后台运行，请使用:"
-        echo -e "${Green_font_prefix}cd $OlivOS_path && screen -dmS OlivOS $conda_path/envs/OlivOS/bin/python3 main.py${Font_color_suffix}"
+        echo -e "${Green_font_prefix}cd $project_path && screen -dmS OlivOS $conda_path/envs/OlivOS/bin/python3 main.py${Font_color_suffix}"
     }
 
 
@@ -511,20 +516,20 @@ Ver=v1.2.2
         echo -e "${Tip} 正在安装OlivOS..."
         sleep 2
         install_OlivOS
-        chmod -R 766 $OlivOS_path
+        chmod -R 766 $project_path
         install_conda_dependence
         download_default_plugin
         echo -e "${Tip} OlivOS安装完成！"
         sleep 2
         echo -e "${Tip} 开始尝试运行，如有问题请提交issue"
-        cd $OlivOS_path && $conda_path/envs/OlivOS/bin/python3 main.py
+        cd $project_path && $conda_path/envs/OlivOS/bin/python3 main.py
         # 打印安装位置
-        echo -e "${Tip} OlivOS安装位置：$OlivOS_path"
+        echo -e "${Tip} OlivOS安装位置：$project_path"
     #    打印OlivOS启动指令
         echo -e "启动指令如下："
-        echo -e "${Green_font_prefix}cd $OlivOS_path && $conda_path/envs/OlivOS/bin/python3 main.py${Font_color_suffix}"
+        echo -e "${Green_font_prefix}cd $project_path && $conda_path/envs/OlivOS/bin/python3 main.py${Font_color_suffix}"
         echo -e "如果需要后台运行，请使用:"
-        echo -e "${Green_font_prefix}cd $OlivOS_path && screen -dmS OlivOS $conda_path/envs/OlivOS/bin/python3 main.py${Font_color_suffix}"
+        echo -e "${Green_font_prefix}cd $project_path && screen -dmS OlivOS $conda_path/envs/OlivOS/bin/python3 main.py${Font_color_suffix}"
     }
 
     # 提示选择在本地安装还是在conda安装
