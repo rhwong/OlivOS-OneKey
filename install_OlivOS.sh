@@ -47,6 +47,9 @@ Ver=v1.2.3-dev
             release="Ubuntu"
         elif cat /proc/version | grep -q -E -i "Centos|red hat|redhat"; then
             release="Centos"
+        # 如果是termux
+        elif [ -f /data/data/com.termux/files/usr/bin/bash ]; then
+            release="Termux"
         # 如果是未知系统版本则输出unknown
         else
             release="unknown"
@@ -73,6 +76,8 @@ Ver=v1.2.3-dev
             else
                 echo -e "${Info} 系统检查通过！"
             fi
+        elif [[ ${release} == "Termux" ]]; then
+            echo -e "${Info} 注意：Termux仅支持本地安装，不支持conda环境！"
         else
             echo -e "${Warrning} playwright仅支持Debian11↑/Ubuntu18↑，请更换系统后再运行本脚本！"
             exit 1
@@ -108,7 +113,7 @@ Ver=v1.2.3-dev
             apt update
             apt install -y wget git
         elif [[ ${release} == "unknown" ]]; then
-            echo -e "${Error} 未知系统版本，若无法继续运行请自行安装wget和git"
+            echo -e "${Warrning} 未知系统版本，若无法继续运行请自行安装wget和git"
             sleep 3
         fi
     }
@@ -292,6 +297,7 @@ Ver=v1.2.3-dev
     {
         echo -e "${Info} 开始安装或修复依赖..."
         sleep 2
+        local py_v_2=`python -V 2>&1|awk '{print $2}'|awk -F '.' '{print $2}'`
         cd ${project_path}
         if [ $ret_code -eq 200 ]; then
             echo -e "${Info} 网络连通性良好，使用默认镜像下载"
@@ -306,13 +312,23 @@ Ver=v1.2.3-dev
             if [ $ret_code -eq 200 ]; then
                 echo -e "${Info} 正在安装${file}中的依赖..."
                 sleep 1
-                pip3 install --upgrade pip -r $file
+                # 如果python版本大于3.10
+                # if [ $py_v_2 -gt 10 ]; then
+                #     pip3 install --upgrade pip -r requirements310.txt
+                # else
+                    pip3 install --upgrade pip -r ${file}
+                # fi
                 echo -e "${Tip} ${file}中的依赖安装完成！"
                 sleep 1
             else
                 echo -e "${Info} 正在安装${file}中的依赖..."
                 sleep 1
-                pip3 install --upgrade pip -r $file -i https://mirrors.cloud.tencent.com/pypi/simple
+                # 如果python版本大于3.10
+                # if [ $py_v_2 -gt 10 ]; then
+                #     pip3 install --upgrade pip -r requirements310.txt -i https://mirrors.cloud.tencent.com/pypi/simple/
+                # else
+                    pip3 install --upgrade pip -r ${file} -i https://mirrors.cloud.tencent.com/pypi/simple/
+                # fi
                 echo -e "${Tip} ${file}中的依赖安装完成！"
                 sleep 1
             fi
