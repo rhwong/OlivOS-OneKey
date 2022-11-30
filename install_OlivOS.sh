@@ -285,6 +285,7 @@ Ver=v1.2.3-dev
         # 更新项目文件
         echo -e "${Tip} 正在更新${project_name}..."
         sleep 2
+        cd ${project_path}
         git pull
         echo -e "${Tip} ${project_name}更新完成！"
         sleep 2
