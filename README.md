@@ -63,6 +63,12 @@ screen -dmS OlivOS cd $HOME/OlivOS && python3 main.py
 ```shell
 screen -r OlivOS
 ```
+### 安装其他依赖
+
+脚本会自动搜索目录下的所有requirements.txt文件并逐个安装，但如果本项目的插件不是这样设计的，你可以按照底下的示例为miniconda的python环境安装依赖
+```
+$HOME/miniconda3/envs/OlivOS/bin/pip3 install wordcloud~=1.8.2.2 -i https://mirrors.cloud.tencent.com/pypi/simple/
+```
 ### 更新和修复
 
 重复安装步骤，按照原本的安装方式选择即可。检测到已存在OlivOS目录时，脚本会自动拉取代码并更新依赖。
