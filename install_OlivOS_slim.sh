@@ -228,9 +228,10 @@ Ver=v1.2.3-dev
     }
 
 
+    # 启动项目
     StartProject()
-    {
-    # 启动脚本
+    {   
+        # 启动脚本
         echo -e "·····························"
         echo -e "···____···____···____··_··__·"
         echo -e "··/·__·\·/·__·\·/·__·\|·|/·/·"
@@ -242,7 +243,19 @@ Ver=v1.2.3-dev
         echo -e "${Red_font_prefix}---${project_name}-OneKey ${Ver} by ${author}---${Font_color_suffix}"
         echo -e "${Tip} 开始安装${project_name}..."
         sleep 2 
-        install_local
+        cd $HOME
+        # 判断项目目录下主要程序是否存在  
+    if [ ! -f "${project_name}/${main_file}" ]; then
+        echo -e "${Info} ${project_name}主文件不存在，开始安装..."
+        # 初次启动
+        sleep 2
+            install_local
+        sleep 2
+    else
+        # 文件已存在
+        echo -e "${Info} ${project_name}项目文件已存在，无需安装！LinkStart！！"
+        sleep 2
+        cd ${project_path} && python3 ${main_file}
+    fi
     }
-
     StartProject
