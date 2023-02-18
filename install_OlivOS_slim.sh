@@ -22,7 +22,12 @@ min_py_ver=8
 max_py_ver=10
 Ver=v1.2.3-dev
 
-
+    # 根据网络选择miniconda3镜像源
+    if [ $ret_code -eq 200 ] || [ $ret_code -eq 301 ]; then
+        miniconda_url=https://repo.anaconda.com/miniconda
+    else
+        miniconda_url=https://mirrors.tuna.tsinghua.edu.cn/anaconda/miniconda
+    fi
     # 检测本地python版本
     check_python()
     {
