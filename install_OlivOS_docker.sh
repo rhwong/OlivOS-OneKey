@@ -62,43 +62,37 @@ Ver=v1.2.3-dev
         fi
     }
 
-    # 检测是否安装pip
-    check_pip()
+    # 安装组件
+    install_tool()
     {
-        if [ -x "$(command -v pip3)" ]; then
-            # 升级pip
-            python3 -m pip install --upgrade pip
-            echo -e "${Info} pip已更新！"
-            sleep 1
-        else
-            echo -e "${Error} pip未安装！"
-            # 尝试安装pip 
-            echo -e "${Tip} 正在尝试安装pip..."
-            sleep 1
-                # 尝试安装python
-                echo -e "${Tip} 正在尝试使用yum安装pip3..."
-                if [[ ${release} == "Centos" ]]; then
-                    yum install -y python3-pip
-                elif [[ ${release} == "Ubuntu" ]]; then
-                    sudo apt install -y python3-pip
-                elif [[ ${release} == "Debian" ]]; then
-                    apt install -y python3-pip
-                elif [[ ${release} == "unknown" ]]; then
-                    echo -e "${Error} 未知系统版本，请自行安装pip3！"
-                    sleep 3
-                    exit 1
-                fi
-                echo -e "${Info} pip3安装结束！"
-                sleep 1
+        apt-get update
+        echo -e "${Info} 镜像源更新完毕"
+        sleep 1
 
-            if [ -x "$(command -v pip3)" ]; then
-                echo -e "${Info} pip安装成功！"
-                sleep 1
-            else
-                echo -e "${Error} pip安装失败，请自行安装！"
-                exit 1
-            fi
-        fi
+        apt-get install -y wget
+        echo -e "${Info} wget安装完毕"
+        sleep 1
+
+        apt-get install -y git
+        echo -e "${Info} git安装完毕"
+        sleep 1
+
+        apt-get install -y build-essential
+        echo -e "${Info} 编译工具安装完毕"
+        sleep 1
+    }
+    # 安装组件
+    Uninstall_tool()
+    {
+        apt-get --purge remove -y build-essential
+        apt-get autoremove -y
+        echo -e "${Info} 编译工具已卸载"
+        sleep 1
+
+        apt-get clean -y 
+        echo -e "${Info} 缓存清除"
+        sleep 1
+
     }
     # 安装项目
     install_project()
@@ -211,7 +205,7 @@ Ver=v1.2.3-dev
     # 本地安装  
     install_local(){
         check_python
-        check_pip
+        install_tool
         install_project
         chmod -R 766 ${project_path}
         cd ${project_path}
@@ -219,6 +213,9 @@ Ver=v1.2.3-dev
         download_default_plugin
         echo -e "${Tip} ${project_name}安装完成！"
         sleep 1
+        echo -e "${Info} ${project_name}开始清理缓存..."
+        sleep 1
+        Uninstall_tool
         # 打印安装位置
         echo -e "${Tip} ${project_name}安装位置：${project_path}"
         sleep 3
