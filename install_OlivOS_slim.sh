@@ -14,7 +14,7 @@ Warrning="${Red_font_prefix}[警告]${Font_color_suffix}"
 Tip="${Green_font_prefix}[提示]${Font_color_suffix}"
 
 ret_code=`curl -o /dev/null --connect-timeout 3 -s -w %{http_code} https://google.com`
-project_path=$HOME/OlivOS
+project_path=/workspace/OlivOS
 project_name=OlivOS
 main_file=main.py
 py_ver=3.9
@@ -103,7 +103,7 @@ Ver=v1.2.3-dev
     # 安装项目
     install_project()
     {
-        cd $HOME
+        cd /workspace
         # 判断项目目录下主要程序是否存在  
     if [ ! -f "${project_name}/${main_file}" ]; then
         echo -e "${Info} ${project_name}主文件不存在，开始安装..."
@@ -243,7 +243,7 @@ Ver=v1.2.3-dev
         echo -e "${Red_font_prefix}---${project_name}-OneKey ${Ver} by ${author}---${Font_color_suffix}"
         echo -e "${Tip} 开始安装${project_name}..."
         sleep 2 
-        cd $HOME
+        cd /workspace
         # 判断项目目录下主要程序是否存在  
     if [ ! -f "${project_name}/${main_file}" ]; then
         echo -e "${Info} ${project_name}主文件不存在，开始安装..."
