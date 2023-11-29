@@ -2,7 +2,7 @@
 
 # =================================================
 #	Description: OlivOS-OneKey
-#	Version: 1.2.2
+#	Version: 1.2.3
 #	Author: RHWong
 # =================================================
 
@@ -14,7 +14,7 @@ Tip="${Green_font_prefix}[提示]${Font_color_suffix}"
 ret_code=`curl -o /dev/null --connect-timeout 3 -s -w %{http_code} https://google.com`
 conda_path=$HOME/miniconda3
 OlivOS_path=$HOME/OlivOS
-Ver=v1.2.2
+Ver=v1.2.3
 
     if [ $ret_code -eq 200 ] || [ $ret_code -eq 301 ]; then
         miniconda_url=https://repo.anaconda.com/miniconda
@@ -253,7 +253,7 @@ Ver=v1.2.2
         else 
         # 如果ret_code变量值不是200，使用镜像下载
             echo -e "${Info} 网络连接异常，开始使用镜像下载OlivOS..."
-            git clone https://ghproxy.com/https://github.com/OlivOS-Team/OlivOS.git & waiting
+            git clone https://mirror.ghproxy.com/https://github.com/OlivOS-Team/OlivOS.git & waiting
         fi
         echo -e "${Tip} OlivOS下载完成！"
         sleep 2
@@ -347,22 +347,22 @@ Ver=v1.2.2
         cd $OlivOS_path/plugin/app
             echo -e "${Info} 下载OlivaDiceCore..."
             sleep 1
-            wget -P $OlivOS_path/plugin/app/ https://ghproxy.com/https://github.com/OlivOS-Team/OlivaDiceCore/releases/latest/download/OlivaDiceCore.opk -N
+            wget -P $OlivOS_path/plugin/app/ https://mirror.ghproxy.com/https://github.com/OlivOS-Team/OlivaDiceCore/releases/latest/download/OlivaDiceCore.opk -N
             echo -e "${Info} 下载OlivaDiceJoe..."
             sleep 1
-            wget $OlivOS_path/plugin/app/ https://ghproxy.com/https://github.com/OlivOS-Team/OlivaDiceJoy/releases/latest/download/OlivaDiceJoy.opk -N
+            wget $OlivOS_path/plugin/app/ https://mirror.ghproxy.com/https://github.com/OlivOS-Team/OlivaDiceJoy/releases/latest/download/OlivaDiceJoy.opk -N
             echo -e "${Info} 下载OlivaDiceLogger..."
             sleep 1
-            wget $OlivOS_path/plugin/app/ https://ghproxy.com/https://github.com/OlivOS-Team/OlivaDiceLogger/releases/latest/download/OlivaDiceLogger.opk -N
+            wget $OlivOS_path/plugin/app/ https://mirror.ghproxy.com/https://github.com/OlivOS-Team/OlivaDiceLogger/releases/latest/download/OlivaDiceLogger.opk -N
             echo -e "${Info} 下载OlivaDiceMaster..."
             sleep 1
-            wget $OlivOS_path/plugin/app/ https://ghproxy.com/https://github.com/OlivOS-Team/OlivaDiceMaster/releases/latest/download/OlivaDiceMaster.opk -N
+            wget $OlivOS_path/plugin/app/ https://mirror.ghproxy.com/https://github.com/OlivOS-Team/OlivaDiceMaster/releases/latest/download/OlivaDiceMaster.opk -N
             echo -e "${Info} 下载ChanceCustom..."
             sleep 1
-            wget $OlivOS_path/plugin/app/ https://ghproxy.com/https://github.com/OlivOS-Team/ChanceCustom/releases/latest/download/ChanceCustom.opk -N
+            wget $OlivOS_path/plugin/app/ https://mirror.ghproxy.com/https://github.com/OlivOS-Team/ChanceCustom/releases/latest/download/ChanceCustom.opk -N
             echo -e "${Info} 下载OlivaDiceOdyssey..."
             sleep 1
-            wget $OlivOS_path/plugin/app/ https://ghproxy.com/https://github.com/OlivOS-Team/OlivaDiceOdyssey/releases/latest/download/OlivaDiceOdyssey.opk -N
+            wget $OlivOS_path/plugin/app/ https://mirror.ghproxy.com/https://github.com/OlivOS-Team/OlivaDiceOdyssey/releases/latest/download/OlivaDiceOdyssey.opk -N
 
         echo -e "${Tip} 默认插件下载完成！"
     }
